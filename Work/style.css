@@ -1,0 +1,32 @@
+.st-key-green button{
+    background-color: green;
+    border-radius: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-top: 10px;
+    animation: pulse 2s
+    infinite;
+}
+
+.st-key-green button p{
+    color: aliceblue;
+    font-size: 25px;
+    font-style: italic;
+}
+
+@keyframes pulse {
+    0%{
+        box-shadow: 0 0 0 0 rgba(76,175,80,0.7);
+    }
+
+    70%{
+        box-shadow: 0 0 0 20px rgba(76,175,80,0);
+    }
+
+    100%{
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+    }
+}
+
