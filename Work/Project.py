@@ -16,20 +16,16 @@ load_css(css_path)
 col1, col2 = st.columns([1.8, 3.2])
 
 with col1:
-    # Title and file upload section
     st.markdown("<h2 style='font-style: bold;'>Medical Equation</h2>", unsafe_allow_html=True)
     st.markdown("### 📂 Upload & Select")
-    a1,a2 = st.columns([3,1])
+    a1, a2 = st.columns([3, 1])
     with a1:
         st.file_uploader("Upload Excel file", type=[".xlsx"])
-
-    # Two sub-columns to hold dropdown or other widgets
     c1, c2 = st.columns(2)
     with c1:
         st.selectbox("Template Format", ['', 'Geoff', 'Marcus', 'Marisa'])
 
 with col2:
-    # Personal Information section with sub-columns for inputs
     st.markdown("### 🙋 Personal Information")
     subcol1, subcol2, subcol3, subcol4 = st.columns([1.5, 2.5, 2.5, 2.5])
     with subcol1:
@@ -41,10 +37,9 @@ with col2:
     with subcol4:
         lname = st.text_input("Last Name")
 
-    # Address section inputs
     st.markdown("### 📍 Address")
     st.markdown("___")
-    co1,co2,co3 = st.columns(3)
+    co1, co2, co3 = st.columns(3)
     with co1:
         rn = st.text_input("Recipient Name")
     with co2:
@@ -52,37 +47,112 @@ with col2:
     with co3:
         st.text_input("Secondary Address Line")
 
-    # Sub-columns for city, state, ZIP
     ssubcol1, ssubcol2, ssubcol3 = st.columns(3)
     with ssubcol1:
         one = st.text_input("City")
     with ssubcol2:
         two = st.text_input("State Abbreviation")
     with ssubcol3:
-        three = st.number_input("ZIP Code",100000,999999,100000)
+        if "zip_code" not in st.session_state:
+            st.session_state.zip_code = ""
 
-    r1,r2,r3 = st.columns(3)
+        def format_zip():
+            raw = st.session_state.zip_code_input
+            if raw.isdigit():
+                num = int(raw)
+                if 501 <= num <= 99950:
+                    st.session_state.zip_code = str(num).zfill(5)
+                else:
+                    st.session_state.zip_code = "Invalid"
+            else:
+                st.session_state.zip_code = "Invalid"
+
+        st.text_input(
+            "Zip Code",
+            value=st.session_state.zip_code,
+            key="zip_code_input",
+            max_chars=5,
+            on_change=format_zip
+        )
+
+    r1, r2, r3 = st.columns(3)
     with r1:
         country = st.text_input("Country")
 
-    # Generate button with required field validation
     if st.button("Generate", key="green"):
-        if honorific == "":
-            st.error("Please select an Honorific.")
-        elif fname.strip() == "":
-            st.error("First Name is required.")
-        elif lname.strip() == "":
-            st.error("Last Name is required.")
-        elif rn.strip() == "":
-            st.error("Recipient name is required.")
-        elif sa.strip() == "":
-            st.error("Street Address or P.O. Box is required.")
-        elif one.strip() == "":
-            st.error("City is required.")
-        elif two.strip() == "":
-            st.error("State Abbreviation is required.")
-        elif three == 0:
-            st.error("Enter a valid ZIP Code.")
+        person_name = []
+        address_info = []
+        address_last_division = []
+        has_error = False
+
+        if honorific != "":
+            person_name.append(honorific)
         else:
+            st.error("Please select an Honorific.")
+            has_error = True
+
+        if fname.strip() != "":
+            person_name.append(fname.strip())
+        else:
+            st.error("First Name is required.")
+            has_error = True
+
+        if mname.strip() != "":
+            person_name.append(mname.strip())  # optional
+
+        if lname.strip() != "":
+            person_name.append(lname.strip())
+        else:
+            st.error("Last Name is required.")
+            has_error = True
+
+        if rn.strip() != "":
+            address_info.append(rn.strip())
+        else:
+            st.error("Recipient name is required.")
+            has_error = True
+
+        if sa.strip() != "":
+            address_info.append(sa.strip())
+        else:
+            st.error("Street Address or P.O. Box is required.")
+            has_error = True
+
+        if one.strip() != "":
+            address_last_division.append(one.strip())
+        else:
+            st.error("City is required.")
+            has_error = True
+
+        if two.strip() != "":
+            address_last_division.append(two.strip())
+        else:
+            st.error("State Abbreviation is required.")
+            has_error = True
+
+        if st.session_state.zip_code not in ["", "Invalid"]:
+            address_last_division.append(st.session_state.zip_code)
+        else:
+            st.error("Enter a valid ZIP Code.")
+            has_error = True
+
+        if country.strip() == "":
+            st.error("Country is required.")
+            has_error = True
+
+        if not has_error:
             st.success("✅ Your form has been successfully generated!")
 
+            if address_last_division:
+                address_info.append(", ".join(address_last_division))
+            print("#######################",address_info)
+            # Display collected information
+            st.markdown("### 📝 Submitted Information")
+            st.markdown("#### Personal Details")
+            st.write(f"{' '.join(person_name)}")
+
+            st.markdown("#### Address")
+            st.write(f"{rn}")
+            st.write(f"{sa}")
+            st.write(f"{', '.join(address_last_division)}")
+            st.write(f"{country}")
