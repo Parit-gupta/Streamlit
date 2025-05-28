@@ -41,17 +41,17 @@ with col2:
     st.markdown("___")
     co1, co2, co3 = st.columns(3)
     with co1:
-        rn = st.text_input("Recipient Name")
+        reciptent_name = st.text_input("Recipient Name")
     with co2:
-        sa = st.text_input("Street Address or P.O. Box")
+        street_address = st.text_input("Street Address or P.O. Box")
     with co3:
         st.text_input("Secondary Address Line")
 
     ssubcol1, ssubcol2, ssubcol3 = st.columns(3)
     with ssubcol1:
-        one = st.text_input("City")
+        city = st.text_input("City")
     with ssubcol2:
-        two = st.text_input("State Abbreviation")
+        state_abbreviation = st.text_input("State Abbreviation")
     with ssubcol3:
         if "zip_code" not in st.session_state:
             st.session_state.zip_code = ""
@@ -106,26 +106,26 @@ with col2:
             st.error("Last Name is required.")
             has_error = True
 
-        if rn.strip() != "":
-            address_info.append(rn.strip())
+        if reciptent_name.strip() != "":
+            address_info.append(reciptent_name.strip())
         else:
             st.error("Recipient name is required.")
             has_error = True
 
-        if sa.strip() != "":
-            address_info.append(sa.strip())
+        if street_address.strip() != "":
+            address_info.append(street_address.strip())
         else:
             st.error("Street Address or P.O. Box is required.")
             has_error = True
 
-        if one.strip() != "":
-            address_last_division.append(one.strip())
+        if city.strip() != "":
+            address_last_division.append(city.strip())
         else:
             st.error("City is required.")
             has_error = True
 
-        if two.strip() != "":
-            address_last_division.append(two.strip())
+        if state_abbreviation.strip() != "":
+            address_last_division.append(state_abbreviation.strip())
         else:
             st.error("State Abbreviation is required.")
             has_error = True
@@ -152,7 +152,7 @@ with col2:
             st.write(f"{' '.join(person_name)}")
 
             st.markdown("#### Address")
-            st.write(f"{rn}")
-            st.write(f"{sa}")
+            st.write(f"{reciptent_name}")
+            st.write(f"{street_address}")
             st.write(f"{', '.join(address_last_division)}")
             st.write(f"{country}")
